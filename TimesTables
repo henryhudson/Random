@@ -1,0 +1,61 @@
+import SwiftUI
+import PureSwiftUI
+import Foundation
+
+
+let gradient = RadialGradient(gradient: Gradient(colors: [.yellow, .orange, .red]),
+                              center: .center,
+                              startRadius: 5,
+                              endRadius: 250)
+
+struct TimesTables_and_Mandlebrot: View {
+    @State var change = false
+    @State var segments = 10
+    var body: some View {
+        ZStack {
+            Color.blue
+            VStack {
+                Mandelbrot()
+                    .stroke(lineWidth: 1)
+                    .fill(gradient)
+                    .frame(width: 300, height: 300, alignment: .center)
+                
+                
+            }
+            .animation(.linear(duration: 5))
+
+        }
+    }
+}
+
+struct Mandelbrot: Shape {
+    
+    var multiplier: Int = 2
+    var upTo: Int = 1
+    var segments: Int = 300
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        var guide = LayoutGuide.polar(rect, rings: 1, segments: segments)
+        
+        
+        for x in 1...segments {
+            if x % 2 == 1 {
+                path.move(guide[1, x])
+                for i in 0...upTo {
+                    path.line(guide[1, Int(x * (multiplier ** i))])
+                }
+            }
+        }
+
+        return path
+    }
+}
+
+struct TimesTables_and_Mandlebrot_Previews: PreviewProvider {
+    static var previews: some View {
+        TimesTables_and_Mandlebrot()
+            .preferredColorScheme(.dark)
+    }
+}
